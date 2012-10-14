@@ -12,12 +12,34 @@ module TwitterWords
       @user = user
     end
     
+    def base_uri
+      "http://api.twitter.com"
+    end
+    
     def endpoint
-      "http://api.twitter.com/1/statuses/#{@user}.json"
+      "/1/statuses/user_timeline.json"
     end
     
     def headers(uri)
-      ::SimpleOAuth::Header.new("GET", uri, {}, credentials)
+      ::SimpleOAuth::Header.new(:get, uri, {}, credentials)
+    end
+    
+    def connection
+      @connection ||= Faraday.new(:url => base_uri)
+    end
+    
+    def request(params = {})
+      connection.get do |req|
+        req.url endpoint
+        req.headers['authorization'] = headers(URI(base_uri)+endpoint).to_s
+        req.params = params.merge!(:screen_name => @user)
+      end
+    end
+    
+    def get_tweets
+      (TOTAL_TWEETS / PER_REQUEST).times do |page|
+        tweets = ActiveSupport::JSON.decode(request({:page => page, :include_rts => 0, :count => PER_REQUEST}))
+      end
     end
     
     def credentials
@@ -27,22 +49,6 @@ module TwitterWords
         :token            => "33167611-RZODb8NAeqWOeLYXjSLuTs6hFBKcEL4qwX2WRVax4",
         :token_secret     => "wLC4jhLz6hihlI7wDWEVo7oivVarLuprWgcN4L3Ile8"
       }
-    end
-    
-    def connection
-      @connection ||= Faraday.new(endpoint)
-    end
-    
-    def request(params = {})
-      request_headers = {:authorization => headers(endpoint).to_s}
-      connection.url_prefix = endpoint
-      connection.run_request(:get, '/', params.merge!(:include_rts => 0, :count => PER_REQUEST), request_headers)
-    end
-    
-    def get_tweets
-      (TOTAL_TWEETS / PER_REQUEST).times do |page|
-        tweets = ActiveSupport::JSON.decode(request({:page => page}))
-      end
     end
   end
 end
