@@ -1,10 +1,8 @@
 require "twitter_words/version"
+require "twitter_words/oauth_request"
 
 module TwitterWords
-  class << self
-    def get_tweets(user)
-      tw = TwitterWords::UsersTweets.new(user)
-      response = tw.request
-    end
+  class UsersTweets
+    
   end
 end
