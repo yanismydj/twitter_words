@@ -21,7 +21,7 @@ module TwitterWords
     end
     
     def last_tweet
-      REDIS.rpop(self.class.key(@user))
+      ActiveSupport::JSON.decode REDIS.lindex(self.class.key(@user), -1)
     end
     
     def get_tweets

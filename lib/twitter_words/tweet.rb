@@ -6,7 +6,7 @@ module TwitterWords
     REDIS = Redis.new
     
     def initialize(user, tweet)
-      REDIS.rpush(User.key(user), tweet)
+      REDIS.rpush(User.key(user), ActiveSupport::JSON.encode(tweet))
     end
     
     class << self

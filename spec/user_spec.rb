@@ -30,8 +30,7 @@ describe TwitterWords::User do
   
   describe "last_tweet" do
     it "should get the users last tweet" do
-      #@yan.last_tweet.should == @sample_tweets.last
-      puts @yan.last_tweet.first
+      @yan.last_tweet["id"].should == @sample_tweets.last["id"]
     end
   end
 end
