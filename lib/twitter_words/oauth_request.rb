@@ -3,8 +3,9 @@ require 'faraday'
 
 module TwitterWords
   class OauthRequest
-    def initialize(user)
+    def initialize(user, number_of_tweets = 10)
       @user = user
+      @number_of_tweets = number_of_tweets
     end
     
     def base_uri

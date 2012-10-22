@@ -24,10 +24,10 @@ module TwitterWords
       ActiveSupport::JSON.decode REDIS.lindex(self.class.key(@user), -1)
     end
     
-    def get_tweets
+    def get_tweets(tweets_to_get = 10)
       if total_tweets_stored < TOTAL_TWEETS_TO_STORE
         oauth_request = OauthRequest.new(user)
-        response = oauth_request.request({:max_id => last_id, :count => 1000})
+        response = oauth_request.request({:max_id => last_tweet["id"], :count => tweets_to_get})
         parsed_response = ActiveSupport::JSON.decode(response.body)
         tweets = parsed_response.map { |tweet| tweet.slice("id", "text") }
       end

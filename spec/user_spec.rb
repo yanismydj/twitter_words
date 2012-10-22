@@ -33,4 +33,11 @@ describe TwitterWords::User do
       @yan.last_tweet["id"].should == @sample_tweets.last["id"]
     end
   end
+  
+  describe "get_tweets" do
+    it "should get more tweets" do
+      @yan.get_tweets(10)
+      @yan.reload.total_tweets.size.should == 12
+    end
+  end
 end
